@@ -1,4 +1,4 @@
-classdef HelperTDOATrackingExampleDisplay < matlab.System
+classdef HelperTDOATrackingExampleNoDisplay < matlab.System
     % This is a helper class to visualize the scenario, detections and
     % tracks in the TDOA tracking example. It may be removed or modified in
     % a future release. 
@@ -30,64 +30,65 @@ classdef HelperTDOATrackingExampleDisplay < matlab.System
     end
 
     % For plotting track vs detection accuracy for single-object use-case.
-    properties (Access = protected)
+    properties (Access = public)
         LoggedFusedMeasurementAccuracy
         LoggedTrackAccuracy
         LoggedTime
     end
 
     methods
-        function obj = HelperTDOATrackingExampleDisplay(varargin)
+        function obj = HelperTDOATrackingExampleNoDisplay(varargin)
             setProperties(obj,nargin,varargin{:});
         end
     end
 
     methods (Access = protected)
         function setupImpl(obj, scenario, rxPairs)
-            f = figure('Units','normalized','Position',[0.1 0.1 0.8 0.8],'HandleVisibility','on');
-            ax = axes(f);
-            tp = theaterPlot('Parent',ax,'XLimits',obj.XLimits,'YLimits',obj.YLimits,'AxesUnits',["km","km","km"]);
-            obj.Figure = f;
-            obj.Axes = ax;
-            obj.TheaterPlot = tp;
-            clrs = darkColorOrder;
-            colororder(ax, clrs)
-            obj.EmitterPlotter = platformPlotter(tp,'MarkerFaceColor',clrs(2,:),'Marker','^','DisplayName','Emitters');
-            obj.ReceiverPlotter = platformPlotter(tp,'MarkerFaceColor',clrs(3,:),'Marker','^','DisplayName','Receivers');
-            obj.FusedDetectionPlotter = detectionPlotter(tp,'MarkerFaceColor',clrs(4,:),'Marker','o','DisplayName','Chan Position');
-            obj.TrackPlotter = trackPlotter(tp,'MarkerFaceColor',clrs(1,:),'Marker','s','DisplayName','Tracks','ConnectHistory','on','ColorizeHistory','on');
-            hLine = findall(gca,'Tag','tpTrackHistory_Tracks');
-            hLine.LineWidth = 3;
-            hold (ax,'on');
-            obj.TDOAPlotters = gobjects(5,1);
-            for i = 1:5
-                obj.TDOAPlotters(i) = plot(nan,nan,'Color',clrs(5+i,:),'LineWidth',1);
-            end
-            trajP = trajectoryPlotter(tp,'Color','k','LineWidth',1,'LineStyle','-');
-            r = record(clone(scenario));
-            poses = horzcat(r.Poses);
-            pos = cell(size(poses,1),1);
-            for i = 1:size(poses,1)
-                pos{i} = vertcat(poses(i,:).Position);
-            end
-            trajP.plotTrajectory(pos);
-            title(ax,obj.Title);
-            if obj.PlotGDOP
-                if isvector(rxPairs)
-                    pairIds = zeros(0,2);
-                    n = numel(rxPairs);
-                    for i = 1:n
-                        thisN = n - i;
-                        thisPair = [i*ones(thisN,1) ((i+1):n)'];
-                        pairIds = [pairIds;thisPair]; %#ok<AGROW> 
-                    end
-                    rxPairs = rxPairs(pairIds);
-                end
-                x = linspace(obj.XLimits(1),obj.XLimits(2),100);
-                y = linspace(obj.YLimits(1),obj.YLimits(2),100);
-                invGDOP = computeGDOP(scenario, rxPairs,x,y);
-                imagesc(ax, invGDOP,'XData',x,'YData',y);            
-            end
+            % f = figure('Units','normalized','Position',[0.1 0.1 0.8 0.8],'HandleVisibility','on');
+            % ax = axes(f);
+            % tp = theaterPlot('Parent',ax,'XLimits',obj.XLimits,'YLimits',obj.YLimits,'AxesUnits',["km","km","km"]);
+            % obj.Figure = f;
+            % obj.Axes = ax;
+            % obj.TheaterPlot = tp;
+            % clrs = darkColorOrder;
+            % colororder(ax, clrs)
+            % obj.EmitterPlotter = platformPlotter(tp,'MarkerFaceColor',clrs(2,:),'Marker','^','DisplayName','Emitters');
+            % obj.ReceiverPlotter = platformPlotter(tp,'MarkerFaceColor',clrs(3,:),'Marker','^','DisplayName','Receivers');
+            % obj.FusedDetectionPlotter = detectionPlotter(tp,'MarkerFaceColor',clrs(4,:),'Marker','o','DisplayName','Static Fused Position');
+            % obj.TrackPlotter = trackPlotter(tp,'MarkerFaceColor',clrs(1,:),'Marker','s','DisplayName','Tracks','ConnectHistory','on','ColorizeHistory','on');
+            % hLine = findall(gca,'Tag','tpTrackHistory_Tracks');
+            % hLine.LineWidth = 3;
+            % hold (ax,'on');
+            % obj.TDOAPlotters = gobjects(5,1);
+            % for i = 1:5
+            %     obj.TDOAPlotters(i) = plot(nan,nan,'Color',clrs(5+i,:),'LineWidth',1);
+            % end
+            % trajP = trajectoryPlotter(tp,'Color','k','LineWidth',1,'LineStyle','-');
+            % r = record(clone(scenario));
+            % poses = horzcat(r.Poses);
+            % pos = cell(size(poses,1),1);
+            % for i = 1:size(poses,1)
+            %     pos{i} = vertcat(poses(i,:).Position);
+            % end
+            % trajP.plotTrajectory(pos);
+            % title(ax,obj.Title);
+            % if obj.PlotGDOP
+            %     if isvector(rxPairs)
+            %         pairIds = zeros(0,2);
+            %         n = numel(rxPairs);
+            %         for i = 1:n
+            %             thisN = n - i;
+            %             thisPair = [i*ones(thisN,1) ((i+1):n)'];
+            %             pairIds = [pairIds;thisPair]; %#ok<AGROW> 
+            %         end
+            %         rxPairs = rxPairs(pairIds);
+            %     end
+            %     x = linspace(obj.XLimits(1),obj.XLimits(2),100);
+            %     y = linspace(obj.YLimits(1),obj.YLimits(2),100);
+            %     invGDOP = computeGDOP(scenario, rxPairs,x,y);
+            %     imagesc(ax, invGDOP,'XData',x,'YData',y);            
+            % end
+            
         end
 
         function stepImpl(obj, scenario, tdoaPairs, tdoaDetections, fusedDetections, tracks)
@@ -96,13 +97,13 @@ classdef HelperTDOATrackingExampleDisplay < matlab.System
             sIdx = cellfun(@(x)x.SensorIndex,tdoaDetections);
             uqSIdx = unique(sIdx);
             for i = 1:numel(uqSIdx)
-                plotTDOADetection(obj, obj.TDOAPlotters(i), tdoaDetections(sIdx == uqSIdx(i)));
+                % plotTDOADetection(obj, obj.TDOAPlotters(i), tdoaDetections(sIdx == uqSIdx(i)));
             end
             poses = platformPoses(scenario);
-            emitPoses = poses(~isReceiver);
-            receivePoses = poses(isReceiver);
-            obj.EmitterPlotter.plotPlatform(vertcat(emitPoses.Position));
-            obj.ReceiverPlotter.plotPlatform(vertcat(receivePoses.Position));
+            % emitPoses = poses(~isReceiver);
+            % receivePoses = poses(isReceiver);
+            % obj.EmitterPlotter.plotPlatform(vertcat(emitPoses.Position));
+            % obj.ReceiverPlotter.plotPlatform(vertcat(receivePoses.Position));
             allDets = [fusedDetections{:}];
             if ~isempty(allDets)
                 triangulatedPos = horzcat(allDets.Measurement);
@@ -111,11 +112,11 @@ classdef HelperTDOATrackingExampleDisplay < matlab.System
                 triangulatedPos = zeros(3,0);
                 triangulatedPosCov = zeros(3,3,0);
             end
-            obj.FusedDetectionPlotter.plotDetection(triangulatedPos',triangulatedPosCov);
+            % obj.FusedDetectionPlotter.plotDetection(triangulatedPos',triangulatedPosCov);
             [pos, posCov] = getTrackPositions(tracks,obj.PositionSelector);
             vel = getTrackVelocities(tracks,obj.VelocitySelector);
             trackIDs = string([tracks.TrackID]);
-            obj.TrackPlotter.plotTrack(pos,posCov,vel,trackIDs);
+            % obj.TrackPlotter.plotTrack(pos,posCov,vel,trackIDs);
             drawnow;
             if obj.LogAccuracy
                 if isscalar(fusedDetections) && isscalar(tracks)
@@ -146,8 +147,8 @@ classdef HelperTDOATrackingExampleDisplay < matlab.System
             ylim = ax.YLim;
             txt = findall(ax,'Type','Text','String',string(trackID));
             if ~isempty(txt)
-                ax.XLim = txt.Position(1) + [-250 1750];
-                ax.YLim = txt.Position(2) + [-750 1250];
+                ax.XLim = txt.Position(1) + [-250 250];
+                ax.YLim = txt.Position(2) + [-250 250];
                 drawnow;
                 snap = takesnap(display.Figure);
                 showsnap(snap);
@@ -162,7 +163,7 @@ classdef HelperTDOATrackingExampleDisplay < matlab.System
             plot(ax,display.LoggedTime,display.LoggedFusedMeasurementAccuracy,'LineWidth',2);
             hold (ax, 'on');
             plot(ax, display.LoggedTime,display.LoggedTrackAccuracy,'LineWidth',2);
-            legend(ax, 'Chan Position','Track');
+            legend(ax, 'Fused Position','Track');
             title(ax,'Target Position Accuracy');
             xlabel(ax,'Time (s)');
             ylabel(ax,'Position Uncertainty (m)');

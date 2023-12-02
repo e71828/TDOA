@@ -26,9 +26,10 @@ for i = 1:numel(xReceiver)
 end
 
 % Add targets
-S = rng(1);
-xTarget = -5000 + 10000*rand(1,numTgts);
-yTarget = -5000 + 10000*rand(1,numTgts);
+S = rng(2033);
+xTarget = -5000 + 10000*(rand(1,numTgts));
+yTarget = -5000 + 10000*(rand(1,numTgts));
+
 vxTarget = 50*randn(1,numTgts);
 vyTarget = 50*randn(1,numTgts);
 zTarget = zeros(1,numTgts);
