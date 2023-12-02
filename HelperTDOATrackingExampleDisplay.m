@@ -231,6 +231,8 @@ classdef HelperTDOATrackingExampleDisplay < matlab.System
             ylabel('Y (km)');
             ax.YDir = 'normal';
             title(ax,'Geometric Dilution of Precision');
+            axis(ax, "square");
+
         end
     end
 end
